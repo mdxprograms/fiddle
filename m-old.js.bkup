@@ -1,0 +1,96 @@
+const Component = function (el, initData) {
+  // helpers
+  Handlebars.registerHelper('list', (items, options) => {
+    return `
+      <ul>
+        ${items.map((item) => {
+          return `<li>${options.fn(item)}</li>`;
+        }).join('')}
+      </ul>
+    `;
+  });
+
+  const component = function (el, payload) {
+    this.selector = document.querySelector(el);
+    this.name = payload.title || '';
+    this.template = document.getElementById(payload.template) || {};
+    this.data = payload.data || {};
+    this.events = payload.events || {};
+
+    this.doInitialData = () => {
+      Object.keys(this.data).map((d) => {
+        this.setData(d, this.data[d]);
+      });
+    };
+
+    this.setEvents = () => {
+      Object.keys(this.events).map((method) => {
+        const childEvent = method.split(':')[0];
+        const childName = method.split(':')[1];
+
+        let childSel = [];
+
+        if (_.includes(childName, '#') || !_.includes(childName, '.')) {
+          childSel = document.querySelector(`${el} ${childName}`);
+
+          childSel.addEventListener(childEvent, (e) => {
+            this.events[method](e);
+          });
+        } else {
+          childSel = document.querySelectorAll(`${el} ${childName}`);
+
+          childSel.forEach((c) => {
+            c.addEventListener(childEvent, (e) => {
+              this.events[method](e);
+            });  
+          });
+        }
+      });
+    };
+
+    this.getData = function (key) {
+      const dataSel = this.selector.dataset[key];
+      return JSON.parse(dataSel);
+    };
+
+    this.setData = function (key, data) {
+      const newData = JSON.stringify(data);
+      this.selector.dataset[key] = newData;
+    };
+
+    this.render = function () {
+      const template = Handlebars.compile(this.template.innerHTML);
+      this.selector.innerHTML = template(this.data);
+    };
+
+    this.doInitialData();
+    this.setEvents();
+
+    return {
+      getData: getData.bind(this),
+      setData: setData.bind(this),
+      render: this.render.bind(this)
+    };
+  };
+
+  return component(el, initData).render();
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const navComponent = new Component('nav', {
+    name: 'navbar',
+    template: 'navbar-component',
+    data: {
+      menu: [
+        { title: 'Home', link: '/' },
+        { title: 'About', link: '/#/about' },
+        { title: 'Examples', link: '/#/examples' },
+      ]
+    },
+    events: {
+      'click:.link': (e) => {
+        e.preventDefault(e);
+      }
+    }
+  });
+});

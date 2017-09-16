@@ -1,0 +1,27 @@
+{
+  "name": "fiddle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "eslint": "^4.7.0",
+    "node-sass": "^4.5.3",
+    "postcss-loader": "^2.0.6",
+    "sass-loader": "^6.0.6",
+    "url-loader": "^0.5.9",
+    "webpack": "^3.6.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1"
+  },
+  "scripts": {
+    "dev-server": "live-server",
+    "webpack-watch": "webpack --watch --output-filename bundle.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Josh Waller <mdx.programs@gmail.com> (http://joshwaller.net/)",
+  "license": "ISC"
+}
